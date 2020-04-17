@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<form action="" style="width: 50em; margin: auto" method="POST">
+
+    {% csrf_token %}
+    {{ form.media }}
+    {{ form }}
+
+<input type="submit" value="Okay">
+</form>
+
+</body>
+</html>
