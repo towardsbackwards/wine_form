@@ -13,7 +13,8 @@ function addForm(obj){
                 console.log('good');
                 alert(JSON.stringify(this.response));
                 // filler(this.response);
-                document.getElementById('id_region').innerHTML=this.response // or responseText
+                document.getElementById(field_id+1).innerHTML=this.response // or responseText
+                // берём элемент, id которого равняется id выбранного + 1, и рендерим туда значения
             } else {
             // handle a non-successful response
                 console.log('bad');
@@ -22,6 +23,8 @@ function addForm(obj){
     };
 
     var data = new FormData(obj.form); // get_data(form.elements, {}); new FormData(obj.form)
+    var field_id = parseInt(obj.id ); // id выбранного поля
+    data.append('field_id', field_id);
     xhttp.open(obj.form.method, obj.getAttribute('data-url'), true);
     // xhttp.setRequestHeader('X-CSRFToken', data['csrfmiddlewaretoken']);
     xhttp.setRequestHeader('X-Requested-With','XMLHttpRequest');

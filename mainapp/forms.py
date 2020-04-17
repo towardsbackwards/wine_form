@@ -26,7 +26,7 @@ class CountryCreateForm(ModelForm):
         for field_name, field in self.fields.items():
             number += 1
             field.widget.attrs['class'] = 'form-control'
-            field.widget.attrs['id'] = f'form_field_num_{number}'
+            field.widget.attrs['id'] = number # присваиваем ко всем полям формы цифровые id в порядке возрастания
         # breakpoint()
 
 

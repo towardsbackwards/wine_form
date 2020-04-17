@@ -8,9 +8,13 @@ class ViewJS(FormView):
 
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
-            data = {'country you chose': str(request.POST)}
-
-            return JsonResponse(data)
+            parent_id = {
+                'parent number you choose': int(request.POST.get('country')),
+                'field id you choose': request.POST.get('field_id')
+            }
+            print(request.POST)
+            # items = MODELITEM.objects.filter(parent_id=parent_id).order_by('name')
+            return JsonResponse(parent_id)
         return Http404()
 
 
