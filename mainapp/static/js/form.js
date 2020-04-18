@@ -11,9 +11,10 @@ function addForm(obj){
             if (this.status && this.status === 200) {
             // handle a successful response
                 console.log('good');
-                console.log(this.response)
-                document.getElementById('city_form').elements.fieldset.innerHTML = this.response.form;
-                // document.getElementById('city_form').innerHTML = this.response.form;
+                console.log(this.response);
+                console.log(obj)
+                // document.getElementById('city_form').elements.fieldset.innerHTML = this.response.form;
+                document.getElementById('city_form').innerHTML = this.response.form;
                 // alert(JSON.stringify(this.response));
                 // filler(this.response);
                 // document.getElementById(field_id+1).innerHTML=this.response // or responseText
