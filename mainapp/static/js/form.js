@@ -11,9 +11,10 @@ function addForm(obj){
             if (this.status && this.status === 200) {
             // handle a successful response
                 console.log('good');
-                alert(JSON.stringify(this.response));
+                console.log(this.response)
+                // alert(JSON.stringify(this.response));
                 // filler(this.response);
-                document.getElementById(field_id+1).innerHTML=this.response // or responseText
+                // document.getElementById(field_id+1).innerHTML=this.response // or responseText
                 // берём элемент, id которого равняется id выбранного + 1, и рендерим туда значения
             } else {
             // handle a non-successful response
