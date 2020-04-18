@@ -17,16 +17,16 @@ class CountryCreateForm(ModelForm):
         super().__init__(*args, **kwargs)
         # breakpoint()
         print(self.data)
-        attrs_dict = {'onchange': 'addForm(this);', 'style': 'display:', 'data-url': f'{self.data_url}'}
-        widget = self.fields['country'].widget
-        widget = widget.widget if hasattr(widget, 'widget') else widget
-        widget.attrs.update(attrs_dict)
-        # breakpoint()
-        number = 0
-        for field_name, field in self.fields.items():
-            number += 1
-            field.widget.attrs['class'] = 'form-control'
-            field.widget.attrs['id'] = number # присваиваем ко всем полям формы цифровые id в порядке возрастания
+        # attrs_dict = {'onchange': 'addForm(this);', 'style': 'display:', 'data-url': f'{self.data_url}'}
+        # widget = self.fields['country'].widget
+        # widget = widget.widget if hasattr(widget, 'widget') else widget
+        # widget.attrs.update(attrs_dict)
+        # # breakpoint()
+        # number = 0
+        # for field_name, field in self.fields.items():
+        #     number += 1
+        #     field.widget.attrs['class'] = 'form-control'
+        #     field.widget.attrs['id'] = number # присваиваем ко всем полям формы цифровые id в порядке возрастания
         # breakpoint()
 
 

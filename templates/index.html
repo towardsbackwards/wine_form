@@ -7,11 +7,14 @@
 </head>
 <body>
 
-<form action="" style="width: 50em; margin: auto" method="POST">
+<form action="" style="width: 50em; margin: auto" method="POST" id="city_form">
 
     {% csrf_token %}
+    <fieldset name="fieldset">
     {{ form.media }}
     {{ form }}
+
+    </fieldset>
 
 <input type="submit" value="Okay">
 </form>
