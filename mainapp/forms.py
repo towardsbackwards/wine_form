@@ -35,7 +35,10 @@ class CountryCreateForm(ModelForm):
                     field.widget.attrs['style'] = 'display: none'
         # Тут вся логика отображения полей, когда передаются данные
         else:
-            pass
+            for field_name, field in self.fields.items():
+                # breakpoint()
+                if field.widget.attrs['id'] > 1:
+                    field.widget.attrs['style'] = 'display: none'
         # Подумай как оставить одно поле страну видимым а остальные не видимые
 
 
