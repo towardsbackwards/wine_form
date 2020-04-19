@@ -6,5 +6,5 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-    path('', include('mainapp.urls', namespace='Qwerty')),
+    path('', include('mainapp.urls', namespace='main')),
 ]
