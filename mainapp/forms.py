@@ -34,10 +34,12 @@ class CountryCreateForm(ModelForm):
         if self.data:
             field_counter += 1  # после второй инициализации формы и при каждой последующей field_counter будет
             # увеличиваться на 1 для того, чтобы обеспечить присвоение атрибутов на следующее поле выбора
+            # подгрузка только следующего поля:
             for field_name, field in self.fields.items():
                 if field.widget.attrs['id'] > int(self.data['field_id']) + 1:
                     field.widget.attrs['style'] = 'display: none'
                     field.label = ''
+            # присвоение атрибутов следующему полю:
             widget = self.fields[fields_numerated[field_counter]].widget
             widget = widget.widget if hasattr(widget, 'widget') else widget
             widget.attrs.update(attrs_dict)
