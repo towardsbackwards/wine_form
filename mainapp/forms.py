@@ -8,7 +8,7 @@ class CountryCreateForm(ModelForm):
 
     class Meta:
         model = Sign
-        fields = ['country', 'region', 'name']
+        fields = '__all__'
 
     class Media:
         js = ('js/form.js',)
@@ -25,28 +25,19 @@ class CountryCreateForm(ModelForm):
             fields_numerated[number] = field_name # создали словарь "порядковый номер - имя поля"
             field.widget.attrs['class'] = 'form-control'
             field.widget.attrs['id'] = number  # присваиваем ко всем полям формы цифровые id в порядке возрастания
-        # при первоначальной инициализации формы атрибуты присваиваются к верхнему полю
-        field_counter = 1
-        widget = self.fields[fields_numerated[field_counter]].widget
-        widget = widget.widget if hasattr(widget, 'widget') else widget
-        widget.attrs.update(attrs_dict)
+            widget = self.fields[fields_numerated[number]].widget
+            widget = widget.widget if hasattr(widget, 'widget') else widget
+            widget.attrs.update(attrs_dict)
 
         if self.data:
-            field_counter += 1  # после второй инициализации формы и при каждой последующей field_counter будет
-            # увеличиваться на 1 для того, чтобы обеспечить присвоение атрибутов на следующее поле выбора
             # подгрузка только следующего поля:
             for field_name, field in self.fields.items():
                 if field.widget.attrs['id'] > int(self.data['field_id']) + 1:
                     field.widget.attrs['style'] = 'display: none'
-                    field.label = ''
-            # присвоение атрибутов следующему полю:
-            widget = self.fields[fields_numerated[field_counter]].widget
-            widget = widget.widget if hasattr(widget, 'widget') else widget
-            widget.attrs.update(attrs_dict)
+                    # field.label = ''
         # Тут вся логика отображения полей, когда передаются данные
         else:
             for field_name, field in self.fields.items():
-                # breakpoint()
                 if field.widget.attrs['id'] > 1:
                     field.widget.attrs['style'] = 'display: none'
                     field.label = ''

@@ -24,8 +24,6 @@ function addForm(obj){
         if (this.readyState === 4){
             if (this.status && this.status === 200) {
                 console.log('good');
-                console.log(this.response);
-                console.log(obj)
                 // document.getElementById('city_form').elements.fieldset.innerHTML = this.response.form;
                 document.getElementById('city_form').innerHTML = this.response.form;
             } else {
