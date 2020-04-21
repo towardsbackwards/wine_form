@@ -7,13 +7,13 @@ from mainapp.forms import CountryCreateForm, RegionForm
 class ViewJS(FormView):
     form_class = CountryCreateForm
 
-    def get_form_class(self):
-        form_class = super().get_form_class()
-        # breakpoint()
-        form = modelform_factory(form_class.Meta.model, form_class, fields=form_class._meta.fields)
-        # breakpoint()
-
-        return form
+    # def get_form_class(self):
+    #     form_class = super().get_form_class()
+    #     # breakpoint()
+    #     form = modelform_factory(form_class.Meta.model, form_class, fields=form_class._meta.fields)
+    #     # breakpoint()
+    #
+    #     return form
 
     def form_valid(self, form):
         # breakpoint()
