@@ -9,12 +9,14 @@ class CountryCreateForm(ModelForm):
 
     class Meta:
         model = Sign
-        fields = '__all__'
+        fields = ['country', 'region']
+        exclude = ['name',]
 
     class Media:
         js = ('js/form.js',)
 
     def __init__(self, *args, **kwargs):
+        print('--------------INIT--------------')
         super().__init__(*args, **kwargs)
         attrs_dict = {'onchange': 'addForm(this)', 'style': 'display:', 'data-url': f'{self.data_url}'}
         number = 0
@@ -24,37 +26,52 @@ class CountryCreateForm(ModelForm):
             fields_numerated[number] = field_name  # создали словарь "порядковый номер - имя поля"
             field.widget.attrs['id'] = number  # присваиваем ко всем полям формы цифровые id в порядке возрастания
             widget = self.fields[fields_numerated[number]].widget
+            widget.attrs.update(attrs_dict)
             field.widget.attrs['class'] = 'form-control'
             # widget = widget.widget if hasattr(widget, 'widget') else widget
-            widget.attrs.update(attrs_dict)
+
         if self.data:
-            # получаем родительское и дочернее поля по соответствию полученного
-            # id с id из словаря. решение универсальное для модели с любыми полями и их количеством
-            current_parent = fields_numerated[int(self.data['field_id'])]
+            active_field = fields_numerated[int(self.data['field_id'])]
+            selected_option = self.data[fields_numerated[int(self.data['field_id'])]]
             try:
                 current_child = fields_numerated[int(self.data['field_id']) + 1]
             except KeyError:
                 current_child = None
+            try:
+                current_parent = fields_numerated[int(self.data['field_id']) - 1]
+            except KeyError:
+                current_parent = None
+
+            if len(selected_option) > 0:
+                active_field_value = self.fields[active_field].queryset.filter(id=self.data[active_field])
+                self.fields[active_field].queryset = active_field_value
             # breakpoint()
-            # подгрузка только следующего поля:
+            elif len(selected_option) == 0:
+                pass
+            elif len(selected_option) == 0 and current_parent:
+                current_parent
+
+            if current_child and 'queryset' in dir(self.fields[current_child]):
+                child_values = self.fields[current_child].queryset.filter(**{active_field: self.data[active_field]})
+                self.fields[current_child].queryset = child_values
             for field_name, field in self.fields.items():
-                # breakpoint()
-                if current_child:
-                    print(self.fields[current_child].queryset.filter(**{current_parent: self.data[current_parent]}))
-                # сравнение присвоенных id-шников с полученным от пользователя
-                # если номер поля > номера поля из self.data + 1, то его скрыть
-                # т.е. при выбранном поле с id=1, если след. поле (и остальные) > 2, то их скрыть
                 if field.widget.attrs['id'] > int(self.data['field_id']) + 1:
                     field.widget.attrs['style'] = 'display: none'
                     field.label = ''
-        # Тут вся логика отображения полей, когда передаются данные
+            # breakpoint()
+            # self.data._mutable = True
+            # self.data.pop('field_id')
         else:
             # стирание остальных полей
             for field_name, field in self.fields.items():
                 if field.widget.attrs['id'] > 1:
                     field.widget.attrs['style'] = 'display: none'
-                    field.label = ''
+                    field.label = None
         # Подумай как оставить одно поле страну видимым а остальные не видимые
+
+    def save(self, commit=True):
+        super().save(commit=True)
+        pass
 
 
 class RegionForm(ModelForm):

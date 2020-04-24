@@ -29,3 +29,4 @@ class CountryCreateView(CreateView):
     """Generic class for Country creation form rendering"""
     template_name = "index.html"
     form_class = CountryCreateForm
+
