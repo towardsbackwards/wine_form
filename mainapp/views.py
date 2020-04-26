@@ -17,8 +17,6 @@ class ViewJS(FormView):
 
     def form_valid(self, form):
         # breakpoint()
-        data = form.data['field_id']
-        print(f'Information from ViewJS (field_id): {data}')
         return JsonResponse({'form': str(form)})
 
     def form_invalid(self, form):

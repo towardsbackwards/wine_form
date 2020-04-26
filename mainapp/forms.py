@@ -9,7 +9,7 @@ class CountryCreateForm(ModelForm):
 
     class Meta:
         model = Sign
-        fields = ['country', 'region']
+        fields = '__all__'
         exclude = ['name',]
 
     class Media:
@@ -31,43 +31,82 @@ class CountryCreateForm(ModelForm):
             # widget = widget.widget if hasattr(widget, 'widget') else widget
 
         if self.data:
-            active_field = fields_numerated[int(self.data['field_id'])]
-            selected_option = self.data[fields_numerated[int(self.data['field_id'])]]
+
+
+            global saved_data
+            if self.data:
+                try:
+                    print(saved_data)
+                except NameError:
+                    pass
+                saved_data = self.data
+                print(self.data)
+                print('asdasd', set(self.data.values()).difference(set(saved_data.values())))
+            # breakpoint()
+
+            current_field_num = int(self.data['field_id'])
+            active_field = fields_numerated[current_field_num]
+            selected_option = self.data[fields_numerated[current_field_num]]
             try:
-                current_child = fields_numerated[int(self.data['field_id']) + 1]
+                current_child = fields_numerated[current_field_num + 1]
             except KeyError:
                 current_child = None
             try:
-                current_parent = fields_numerated[int(self.data['field_id']) - 1]
+                current_parent = fields_numerated[current_field_num - 1]
             except KeyError:
                 current_parent = None
+            if (current_field_num - 2) >= 1:  # if current field index = 3 or higher
+                for i in range(1, (current_field_num - 1)):  # in a range of all fields between 0 and current parent (not inclusive)
+                    self.fields[fields_numerated[i]].queryset = \
+                        self.fields[fields_numerated[i]].queryset.filter(id=self.data[fields_numerated[i]])
+                    self.fields[fields_numerated[i]].widget.attrs['readonly'] = True
 
-            if len(selected_option) > 0:
-                active_field_value = self.fields[active_field].queryset.filter(id=self.data[active_field])
+            if len(selected_option) > 0 and not current_parent:
+                print(self.data)
+                print('len(selected_option) > 0 and not current_parent')
+                # active_field_value = self.fields[active_field].queryset.all()
+                # self.fields[active_field].queryset = active_field_value
+                self.fields[fields_numerated[current_field_num]].widget.attrs['readonly'] = True
+
+            elif len(selected_option) == 0 and not current_parent:
+                active_field_value = self.fields[active_field].queryset.filter(id=1)
                 self.fields[active_field].queryset = active_field_value
-            # breakpoint()
-            elif len(selected_option) == 0:
-                pass
-            elif len(selected_option) == 0 and current_parent:
-                current_parent
+                self.fields[current_child].widget.attrs['style'] = 'display: none'
+                print('len(selected_option) == 0 and not current_parent')
 
-            if current_child and 'queryset' in dir(self.fields[current_child]):
-                child_values = self.fields[current_child].queryset.filter(**{active_field: self.data[active_field]})
-                self.fields[current_child].queryset = child_values
+            elif len(selected_option) == 0 and len(current_parent) > 0:
+                print('len(selected_option) == 0 and len(current_parent) > 0')
+                self.fields[current_child].widget.attrs['style'] = 'display: none'
+                print(f'I HIDE {current_child}')
+            elif len(selected_option) > 0 and current_parent:
+                print('len(selected_option) > 0 and current_parent')
+                current_parent_value = self.fields[current_parent].queryset.filter(id=self.data[active_field])
+                active_field_value = self.fields[active_field].queryset.filter(id=self.data[active_field])
+                self.fields[current_parent].queryset = current_parent_value
+                self.fields[active_field].queryset = active_field_value
+                self.fields[active_field].widget.attrs['readonly'] = True
+                self.fields[current_parent].widget.attrs['readonly'] = True
+
+            if current_child and len(selected_option) > 0:
+                if 'queryset' in dir(self.fields[current_child]):
+                    child_values = self.fields[current_child].queryset.filter(**{active_field: self.data[active_field]})
+                    self.fields[current_child].queryset = child_values
             for field_name, field in self.fields.items():
                 if field.widget.attrs['id'] > int(self.data['field_id']) + 1:
                     field.widget.attrs['style'] = 'display: none'
                     field.label = ''
+
             # breakpoint()
             # self.data._mutable = True
             # self.data.pop('field_id')
+            # breakpoint()
+            # print(f'PARENT - {current_parent}, CHILD - {current_child}, ACTIVE - {active_field}')
         else:
             # стирание остальных полей
             for field_name, field in self.fields.items():
                 if field.widget.attrs['id'] > 1:
                     field.widget.attrs['style'] = 'display: none'
                     field.label = None
-        # Подумай как оставить одно поле страну видимым а остальные не видимые
 
     def save(self, commit=True):
         super().save(commit=True)
