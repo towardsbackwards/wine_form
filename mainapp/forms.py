@@ -6,11 +6,12 @@ from mainapp.models import Sign, Region
 class CountryCreateForm(ModelForm):
     data_url = '/country-form-data/'
     dep_fields = '__all__'
+    saved_data = set()
 
     class Meta:
         model = Sign
         fields = '__all__'
-        exclude = ['name',]
+        exclude = ['name', ]
 
     class Media:
         js = ('js/form.js',)
@@ -32,17 +33,22 @@ class CountryCreateForm(ModelForm):
 
         if self.data:
 
-
             global saved_data
             if self.data:
                 try:
                     print(saved_data)
+                    field_oid = None
+                    for key, value in saved_data.items():
+                        if self.data[key] != value:
+                            field_fid = key
+                            print('FIELD FOR ID', field_fid)
                 except NameError:
-                    pass
+                    field_oid = 'country'
+
                 saved_data = self.data
                 print(self.data)
-                print('asdasd', set(self.data.values()).difference(set(saved_data.values())))
-            # breakpoint()
+                print('FRIELD_OID', field_oid)
+
 
             current_field_num = int(self.data['field_id'])
             active_field = fields_numerated[current_field_num]
@@ -56,7 +62,8 @@ class CountryCreateForm(ModelForm):
             except KeyError:
                 current_parent = None
             if (current_field_num - 2) >= 1:  # if current field index = 3 or higher
-                for i in range(1, (current_field_num - 1)):  # in a range of all fields between 0 and current parent (not inclusive)
+                for i in range(1, (
+                        current_field_num - 1)):  # in a range of all fields between 0 and current parent (not inclusive)
                     self.fields[fields_numerated[i]].queryset = \
                         self.fields[fields_numerated[i]].queryset.filter(id=self.data[fields_numerated[i]])
                     self.fields[fields_numerated[i]].widget.attrs['readonly'] = True
@@ -64,18 +71,18 @@ class CountryCreateForm(ModelForm):
             if len(selected_option) > 0 and not current_parent:
                 print(self.data)
                 print('len(selected_option) > 0 and not current_parent')
-                # active_field_value = self.fields[active_field].queryset.all()
-                # self.fields[active_field].queryset = active_field_value
+                active_field_value = self.fields[active_field].queryset.filter(id=self.data[active_field])
+                self.fields[active_field].queryset = active_field_value
                 self.fields[fields_numerated[current_field_num]].widget.attrs['readonly'] = True
 
             elif len(selected_option) == 0 and not current_parent:
-                active_field_value = self.fields[active_field].queryset.filter(id=1)
-                self.fields[active_field].queryset = active_field_value
                 self.fields[current_child].widget.attrs['style'] = 'display: none'
                 print('len(selected_option) == 0 and not current_parent')
 
             elif len(selected_option) == 0 and len(current_parent) > 0:
                 print('len(selected_option) == 0 and len(current_parent) > 0')
+                active_field_value = self.fields[active_field].queryset.filter(id=self.data[current_parent])
+                self.fields[active_field].queryset = active_field_value
                 self.fields[current_child].widget.attrs['style'] = 'display: none'
                 print(f'I HIDE {current_child}')
             elif len(selected_option) > 0 and current_parent:
@@ -84,9 +91,8 @@ class CountryCreateForm(ModelForm):
                 active_field_value = self.fields[active_field].queryset.filter(id=self.data[active_field])
                 self.fields[current_parent].queryset = current_parent_value
                 self.fields[active_field].queryset = active_field_value
-                self.fields[active_field].widget.attrs['readonly'] = True
+                self.fields[active_field].empty_label = None
                 self.fields[current_parent].widget.attrs['readonly'] = True
-
             if current_child and len(selected_option) > 0:
                 if 'queryset' in dir(self.fields[current_child]):
                     child_values = self.fields[current_child].queryset.filter(**{active_field: self.data[active_field]})
@@ -114,7 +120,6 @@ class CountryCreateForm(ModelForm):
 
 
 class RegionForm(ModelForm):
-
     class Meta:
         model = Region
         fields = ('country', 'name')
@@ -127,7 +132,6 @@ class RegionForm(ModelForm):
 
 
 class SignForm(ModelForm):
-
     class Meta:
         model = Sign
         fields = ('country', 'region', 'name')
