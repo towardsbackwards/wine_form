@@ -32,27 +32,31 @@ class CountryCreateForm(ModelForm):
             # widget = widget.widget if hasattr(widget, 'widget') else widget
 
         if self.data:
-
             global saved_data
-            if self.data:
-                try:
-                    print(saved_data)
-                    field_oid = None
-                    for key, value in saved_data.items():
-                        if self.data[key] != value:
-                            field_fid = key
-                            print('FIELD FOR ID', field_fid)
-                except NameError:
-                    field_oid = 'country'
+            try:
+                # здесь saved_data != текущей self.data (saved_data сейчас содержит предыдущие данные)
+                for key, value in saved_data.items():
+                    if self.data[key] != value:
+                        field_name = key
+                        field_value = self.data[key]
+            except NameError:
+                # здесь saved_data ещё нет, т.к. это первая инициализация
+                field_name = fields_numerated[1]
+                current_field_num = 1
+                field_value = self.data[fields_numerated[1]]
 
-                saved_data = self.data
-                print(self.data)
-                print('FRIELD_OID', field_oid)
+            for key, value in fields_numerated.items():
+                if value == field_name:
+                    current_field_num = key
+            active_field = field_name
+            selected_option = field_value
 
+            saved_data = self.data
 
-            current_field_num = int(self.data['field_id'])
-            active_field = fields_numerated[current_field_num]
-            selected_option = self.data[fields_numerated[current_field_num]]
+            print(f'field_name - {field_name}, current_field_num {current_field_num},  selected_option - {selected_option}')
+            #  current_field_num = int(self.data['field_id'])
+            #  active_field = fields_numerated[current_field_num]
+            #  selected_option = self.data[fields_numerated[current_field_num]]
             try:
                 current_child = fields_numerated[current_field_num + 1]
             except KeyError:
@@ -69,7 +73,6 @@ class CountryCreateForm(ModelForm):
                     self.fields[fields_numerated[i]].widget.attrs['readonly'] = True
 
             if len(selected_option) > 0 and not current_parent:
-                print(self.data)
                 print('len(selected_option) > 0 and not current_parent')
                 active_field_value = self.fields[active_field].queryset.filter(id=self.data[active_field])
                 self.fields[active_field].queryset = active_field_value
@@ -98,7 +101,7 @@ class CountryCreateForm(ModelForm):
                     child_values = self.fields[current_child].queryset.filter(**{active_field: self.data[active_field]})
                     self.fields[current_child].queryset = child_values
             for field_name, field in self.fields.items():
-                if field.widget.attrs['id'] > int(self.data['field_id']) + 1:
+                if field.widget.attrs['id'] > current_field_num + 1:
                     field.widget.attrs['style'] = 'display: none'
                     field.label = ''
 

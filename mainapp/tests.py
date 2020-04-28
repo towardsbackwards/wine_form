@@ -4,4 +4,5 @@ data2 = {'csrfmiddlewaretoken': ['cpWuNxH88ZRG3A5ouCdJHKWywL6baFUyeCR7YGpAD9U4Tr
 for key, value in data1.items():
     if data2[key] != value:
         field_id = key
+    print(data2[key])
 print(field_id)
