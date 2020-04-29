@@ -20,7 +20,5 @@ function addForm(obj){
 
     xhttp.open(obj.form.method, obj.getAttribute('data-url'), true);
     xhttp.setRequestHeader('X-Requested-With','XMLHttpRequest');
-    var field_id = parseInt(obj.id ); // id выбранного поля
-    // data.append('field_id', field_id);
     xhttp.send(data);
 }

@@ -6,7 +6,7 @@ from mainapp.models import Sign, Region
 class CountryCreateForm(ModelForm):
     data_url = '/country-form-data/'
     dep_fields = '__all__'
-    saved_data = set()
+    saved_data = current_field_name = field_value = current_field_num = None
 
     class Meta:
         model = Sign
@@ -32,84 +32,43 @@ class CountryCreateForm(ModelForm):
             # widget = widget.widget if hasattr(widget, 'widget') else widget
 
         if self.data:
-            global saved_data
+            index = active_field = selected_option = ['']
+            for key, value in self.data.items():
+                """Определяем активное поле как "поле со значением перед полем без значения"""
+                #  добавить "если последнее заполненное = активное"
+                if value != '':
+                    print(key, value)
+                    for s_key, s_value in fields_numerated.items():
+                        if key == s_value:
+                            index = s_key
+                            active_field = s_value
+                            selected_option = value
+            print(f'index - {index}, active_field - {active_field}, selected_option - {selected_option} ')
             try:
-                # здесь saved_data != текущей self.data (saved_data сейчас содержит предыдущие данные)
-                for key, value in saved_data.items():
-                    if self.data[key] != value:
-                        field_name = key
-                        field_value = self.data[key]
-            except NameError:
-                # здесь saved_data ещё нет, т.к. это первая инициализация
-                field_name = fields_numerated[1]
-                current_field_num = 1
-                field_value = self.data[fields_numerated[1]]
-
-            for key, value in fields_numerated.items():
-                if value == field_name:
-                    current_field_num = key
-            active_field = field_name
-            selected_option = field_value
-
-            saved_data = self.data
-
-            print(f'field_name - {field_name}, current_field_num {current_field_num},  selected_option - {selected_option}')
-            #  current_field_num = int(self.data['field_id'])
-            #  active_field = fields_numerated[current_field_num]
-            #  selected_option = self.data[fields_numerated[current_field_num]]
-            try:
-                current_child = fields_numerated[current_field_num + 1]
+                current_child = fields_numerated[index + 1]
             except KeyError:
                 current_child = None
             try:
-                current_parent = fields_numerated[current_field_num - 1]
+                current_parent = fields_numerated[index - 1]
             except KeyError:
                 current_parent = None
-            if (current_field_num - 2) >= 1:  # if current field index = 3 or higher
-                for i in range(1, (
-                        current_field_num - 1)):  # in a range of all fields between 0 and current parent (not inclusive)
-                    self.fields[fields_numerated[i]].queryset = \
-                        self.fields[fields_numerated[i]].queryset.filter(id=self.data[fields_numerated[i]])
-                    self.fields[fields_numerated[i]].widget.attrs['readonly'] = True
 
-            if len(selected_option) > 0 and not current_parent:
-                print('len(selected_option) > 0 and not current_parent')
-                active_field_value = self.fields[active_field].queryset.filter(id=self.data[active_field])
-                self.fields[active_field].queryset = active_field_value
-                self.fields[fields_numerated[current_field_num]].widget.attrs['readonly'] = True
+            if len(selected_option) > 0:
+                if self.fields[active_field].widget.input_type == 'select':
+                    active_field_value = self.fields[active_field].queryset.filter(id=self.data[active_field])
+                    self.fields[active_field].queryset = active_field_value
+            elif len(selected_option) == 0:
+                pass
+            elif len(selected_option) == 0 and current_parent:
+                pass
 
-            elif len(selected_option) == 0 and not current_parent:
-                self.fields[current_child].widget.attrs['style'] = 'display: none'
-                print('len(selected_option) == 0 and not current_parent')
-
-            elif len(selected_option) == 0 and len(current_parent) > 0:
-                print('len(selected_option) == 0 and len(current_parent) > 0')
-                active_field_value = self.fields[active_field].queryset.filter(id=self.data[current_parent])
-                self.fields[active_field].queryset = active_field_value
-                self.fields[current_child].widget.attrs['style'] = 'display: none'
-                print(f'I HIDE {current_child}')
-            elif len(selected_option) > 0 and current_parent:
-                print('len(selected_option) > 0 and current_parent')
-                current_parent_value = self.fields[current_parent].queryset.filter(id=self.data[active_field])
-                active_field_value = self.fields[active_field].queryset.filter(id=self.data[active_field])
-                self.fields[current_parent].queryset = current_parent_value
-                self.fields[active_field].queryset = active_field_value
-                self.fields[active_field].empty_label = None
-                self.fields[current_parent].widget.attrs['readonly'] = True
-            if current_child and len(selected_option) > 0:
-                if 'queryset' in dir(self.fields[current_child]):
-                    child_values = self.fields[current_child].queryset.filter(**{active_field: self.data[active_field]})
-                    self.fields[current_child].queryset = child_values
+            if current_child and 'queryset' in dir(self.fields[current_child]):
+                child_values = self.fields[current_child].queryset.filter(**{active_field: self.data[active_field]})
+                self.fields[current_child].queryset = child_values
             for field_name, field in self.fields.items():
-                if field.widget.attrs['id'] > current_field_num + 1:
+                if field.widget.attrs['id'] > index + 1:
                     field.widget.attrs['style'] = 'display: none'
                     field.label = ''
-
-            # breakpoint()
-            # self.data._mutable = True
-            # self.data.pop('field_id')
-            # breakpoint()
-            # print(f'PARENT - {current_parent}, CHILD - {current_child}, ACTIVE - {active_field}')
         else:
             # стирание остальных полей
             for field_name, field in self.fields.items():
