@@ -6,7 +6,7 @@ class Country(models.Model):
     class Meta:
         verbose_name_plural = "Countries"
 
-    name = models.CharField('Country name', unique=True,  max_length=128)
+    name = models.CharField('Country name', unique=True,  max_length=128, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -17,7 +17,7 @@ class Region(models.Model):
     class Meta:
         verbose_name_plural = "Regions"
 
-    country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField('Region name', max_length=128)
 
     def __str__(self):
@@ -55,12 +55,12 @@ class Sign(models.Model):
     class Meta:
         verbose_name_plural = "Signs"
 
-    country = models.ForeignKey(Country, on_delete=models.CASCADE)
-    region = models.ForeignKey(Region, on_delete=models.CASCADE)
-    area = models.ForeignKey(Area, on_delete=models.CASCADE)
-    quality_mark = models.ForeignKey(QualityMark, on_delete=models.CASCADE)
-    sign = models.CharField('Wine sign', max_length=1)
-    name = models.CharField('Sign', max_length=64)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, blank=True, null=True)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, blank=True, null=True)
+    area = models.ForeignKey(Area, on_delete=models.CASCADE, blank=True, null=True)
+    quality_mark = models.ForeignKey(QualityMark, on_delete=models.CASCADE, blank=True, null=True)
+    sign = models.CharField('Wine sign', max_length=1, null=True)
+    name = models.CharField('Sign', max_length=64, null=True)
 
     def __str__(self):
         return f'Sign {self.id} ({self.country}, {self.region})'

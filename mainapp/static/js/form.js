@@ -17,7 +17,6 @@ function addForm(obj){
         }
     };
     var data = new FormData(obj.form);
-
     xhttp.open(obj.form.method, obj.getAttribute('data-url'), true);
     xhttp.setRequestHeader('X-Requested-With','XMLHttpRequest');
     xhttp.send(data);
