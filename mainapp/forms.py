@@ -30,8 +30,8 @@ class CountryCreateForm(ModelForm):
                     if self.fields[item].queryset.count():  # ???
                         self.fields[item].widget.attrs.update({'style': 'visibility: visible'})
                 if self.fields[item].queryset.count(): #???
-                    if self.fields[item].queryset.count():
-                        self.fields[item].widget.attrs.update({'style': 'visibility: visible'})
+                    if len(self.data[parent]) == 0:
+                        self.fields[item].widget.attrs.update({'style': 'visibility: hidden'})
                 if self.fields[item]:
                     parent = item
                 else:
