@@ -23,11 +23,12 @@ class CountryCreateForm(ModelForm):
             for item in child_fields:
                 if self.data[parent]:  # если есть данные в первом поле
                     if 'queryset' in dir(self.fields[item]):
-                        for field in self.dep_fields[:self.dep_fields.index(item)]:  # мой супир-пупир цикл
+                        for field in self.dep_fields[:self.dep_fields.index(item)]:  # цикл фильтрации всех полей, которые выше item.
+                            # значения в текущее поле будут выводиться только при условии того, что все вышестоящие поля в себя также их включают
                             self.fields[item].queryset = self.fields[item].queryset.filter(**{field: self.data[field]})
                         if len(self.fields[item].queryset) == 0:  # len, а не count() чтобы не обращаться к БД каждый раз
                             for child in self.dep_fields[self.dep_fields.index(item):]:
-                                self.fields[child].widget.attrs['style'] = 'visibility: hidden'  # обходит условие наличия 'queryset' и скрывает все поля, ниже item
+                                self.fields[child].widget.attrs['style'] = 'visibility: hidden'  # скрывает все поля ниже item
                     parent = item
                 else:
                     self.fields[item].widget.attrs['style'] = 'visibility: hidden'
