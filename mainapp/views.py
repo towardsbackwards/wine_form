@@ -8,9 +8,14 @@ from mainapp.forms import CountryCreateForm, RegionForm
 class ViewJS(FormView):
     form_class = CountryCreateForm
 
-    # def post(self, request, *args, **kwargs):
-    #     super().post(request, *args, **kwargs)
-    #     breakpoint()
+    def post(self, request, *args, **kwargs):
+        super().post(request, *args, **kwargs)
+        print(request.POST)
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
     # def get_form_class(self):
     #     form_class = super().get_form_class()

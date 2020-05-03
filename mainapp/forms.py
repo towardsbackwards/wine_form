@@ -1,3 +1,4 @@
+from django.core.exceptions import FieldError
 from django.forms import ModelForm
 
 from mainapp.models import Sign, Region
@@ -6,12 +7,12 @@ from mainapp.models import Sign, Region
 class CountryCreateForm(ModelForm):
     data_url = '/country-form-data/'
     dep_fields = ['country', 'region', 'area']
+    cons_fields = ['quality_mark', 'name']
     # saved_data = current_field_name = field_value = current_field_num = None
 
     class Meta:
         model = Sign
         fields = ['country', 'region', 'area']
-        # exclude = ['name', ]
 
     class Media:
         js = ('js/form.js',)
@@ -19,23 +20,28 @@ class CountryCreateForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         parent, child_fields = self.dep_fields[0], self.dep_fields[1:]
+        first = self.dep_fields[0]
         attrs_dict = {'onchange': 'addForm(this)', 'style': 'display:', 'data-url': f'{self.data_url}'}
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
             self.fields[field_name].widget.attrs.update(attrs_dict)
         if self.data:
             for item in child_fields:
-                if self.data[parent]:
-                    self.fields[item].queryset = self.fields[item].queryset.filter(**{parent: self.data[parent]})
-                    if self.fields[item].queryset.count():  # ???
-                        self.fields[item].widget.attrs.update({'style': 'visibility: visible'})
-                if self.fields[item].queryset.count(): #???
-                    if len(self.data[parent]) == 0:
+                if self.data[parent]:  # если есть данные в первом поле
+                    #  фильтрация по текущему родителю И ПЕРВОМУ полю, чтобы при смене страны (при уже выбранном регионе
+                    #  и зоне не оставалась заполненной неправильная зона)
+                    self.fields[item].queryset = self.fields[item].queryset.filter(**{first: self.data[first]}).filter(**{parent: self.data[parent]})
+                    #  и спрятать children поля, которые после item'a
+                    if not self.fields[item].queryset.count():  # ???
                         self.fields[item].widget.attrs.update({'style': 'visibility: hidden'})
-                if self.fields[item]:
                     parent = item
                 else:
                     self.fields[item].widget.attrs.update({'style': 'visibility: hidden'})
+
+                    if not self.fields[item].queryset.count():  # ???
+                        self.fields[item].widget.attrs.update({'style': 'visibility: hidden'})
+                # if self.data['area']:
+                #     breakpoint()
         else:
             for item in child_fields:
                 self.fields[item].widget.attrs['style'] = 'visibility: hidden'

@@ -29,6 +29,7 @@ class Area(models.Model):
     class Meta:
         verbose_name_plural = "Areas"
 
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, blank=True, null=True)
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
     name = models.CharField('Area name', max_length=128)
 
