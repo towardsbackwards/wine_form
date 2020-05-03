@@ -2,25 +2,21 @@ from django.forms import modelform_factory
 from django.http import JsonResponse, Http404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, FormView
-from mainapp.forms import CountryCreateForm, RegionForm
+from mainapp.forms import CountryCreateForm
 
 
 class ViewJS(FormView):
     form_class = CountryCreateForm
 
-    def post(self, request, *args, **kwargs):
-        super().post(request, *args, **kwargs)
-        print(request.POST)
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
-    # def get_form_class(self):
-    #     form_class = super().get_form_class()
-    #     form = modelform_factory(form_class.Meta.model, form_class, fields=form_class._meta.fields)
-    #     return form
+    # def post(self, request, *args, **kwargs):
+    #     super().post(request, *args, **kwargs)
+    #     print(request.POST)
+    #     breakpoint()
+    #     form = self.get_form()
+    #     if form.is_valid():
+    #         return self.form_valid(form)
+    #     else:
+    #         return self.form_invalid(form)
 
     def form_valid(self, form):
         # super().form_valid(form)
