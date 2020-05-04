@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
+{% extends "base.html" %}{% load i18n %}
+{% load static %}
+{% block body %}
 <form action="" style="width: 50em; margin: auto" method="POST" id="city_form">
 
     {% csrf_token %}
@@ -14,9 +8,7 @@
         {{ form.media }}
         {{ form }}
     </fieldset>
-    <input type="submit" value="Okay">
+    <input type="submit" value={% trans "Save form" %}>
 
 </form>
-
-</body>
-</html>
+{% endblock %}

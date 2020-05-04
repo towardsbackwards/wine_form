@@ -1,12 +1,12 @@
 from django.db import models
-
+from django.utils.translation import gettext_lazy as _
 
 class Country(models.Model):
     """Common Country model"""
     class Meta:
-        verbose_name_plural = "Countries"
+        verbose_name_plural = _("Countries")
 
-    name = models.CharField('Country name', unique=True,  max_length=128, blank=True, null=True)
+    name = models.CharField(_('Country name'), unique=True,  max_length=128, blank=False, null=False)
 
     def __str__(self):
         return self.name
@@ -15,10 +15,10 @@ class Country(models.Model):
 class Region(models.Model):
     """Common region model (depends on Country)"""
     class Meta:
-        verbose_name_plural = "Regions"
+        verbose_name_plural = _("Regions")
 
     country = models.ForeignKey(Country, on_delete=models.CASCADE, blank=True, null=True)
-    name = models.CharField('Region name', max_length=128)
+    name = models.CharField(_('Region name'), max_length=128)
 
     def __str__(self):
         return self.name
@@ -27,11 +27,11 @@ class Region(models.Model):
 class Area(models.Model):
     """Common area model (depends on region)"""
     class Meta:
-        verbose_name_plural = "Areas"
+        verbose_name_plural = _("Areas")
 
     country = models.ForeignKey(Country, on_delete=models.CASCADE, blank=True, null=True)
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
-    name = models.CharField('Area name', max_length=128)
+    name = models.CharField(_('Area name'), max_length=128)
 
     def __str__(self):
         return self.name
@@ -40,12 +40,12 @@ class Area(models.Model):
 class QualityMark(models.Model):
     """Common quality mark model (depends on Country, region and area)"""
     class Meta:
-        verbose_name_plural = "Quality marks"
+        verbose_name_plural = _("Quality marks")
 
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
     area = models.ForeignKey(Area, on_delete=models.CASCADE)
-    name = models.CharField('Quality mark', max_length=64)
+    name = models.CharField(_('Quality mark'), max_length=64)
 
     def __str__(self):
         return self.name
@@ -54,14 +54,14 @@ class QualityMark(models.Model):
 class Sign(models.Model):
     """Common "wine sign" model (depends on Country, region. area and quality mark)"""
     class Meta:
-        verbose_name_plural = "Signs"
+        verbose_name_plural = _("Signs")
 
     country = models.ForeignKey(Country, on_delete=models.CASCADE, blank=True, null=True)
     region = models.ForeignKey(Region, on_delete=models.CASCADE, blank=True, null=True)
     area = models.ForeignKey(Area, on_delete=models.CASCADE, blank=True, null=True)
     quality_mark = models.ForeignKey(QualityMark, on_delete=models.CASCADE, blank=True, null=True)
-    sign = models.CharField('Wine sign', max_length=1, null=True)
-    name = models.CharField('Sign', max_length=64, null=True)
+    sign = models.CharField(_('Wine sign'), max_length=1, null=True)
+    name = models.CharField(_('Sign'), max_length=64, null=True)
 
     def __str__(self):
         return f'Sign {self.id} ({self.country}, {self.region})'
