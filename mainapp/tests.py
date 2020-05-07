@@ -1,41 +1,32 @@
-# data1 = {'csrfmiddlewaretoken': ['cpWuNxH88ZRG3A5ouCdJHKWywL6baFUyeCR7YGpAD9U4TrLhaCR7Td6y0bQU1JfK'], 'country': ['2'], 'region': [''], 'area': [''], 'quality_mark': [''], 'sign': [''], 'field_id': ['1']}
-# data2 = {'csrfmiddlewaretoken': ['cpWuNxH88ZRG3A5ouCdJHKWywL6baFUyeCR7YGpAD9U4TrLhaCR7Td6y0bQU1JfK'], 'country': ['1'], 'region': [''], 'area': [''], 'quality_mark': [''], 'sign': [''], 'field_id': ['1']}
-#
-# # for key, value in data1.items():
-# #     if data2[key] != value:
-# #         field_id = key
-# #     print(data2[key])
-# # print(field_id)
-# self_data = {'csrfmiddlewaretoken': ['cpWuNxH88ZRG3A5ouCdJHKWywL6baFUyeCR7YGpAD9U4TrLhaCR7Td6y0bQU1JfK'], 'country': ['2'], 'region': ['1'], 'area': [''], 'quality_mark': ['33'], 'sign': ['1231']}
-# fields_numerated = {1: 'country', 2: 'region', 3: 'area', 4: 'quality_mark', 5: 'sign'}
-#
-#
-# for key, value in self_data.items():
-#     if value != ['']:
-#         print(key, value)
-#         for s_key, s_value in fields_numerated.items():
-#             if key == s_value:
-#                 index = s_key
-#                 name = s_value
-#                 option = value
-# print(f'index последнего заполненного поля в форме = {index}, название - {name}, выбрано - {value}')
+import re
 
-import itertools as it
-import random
+from django.forms import BaseFormSet
 
-fields = ['country', 'region', 'area', 'quality_mark']
-new = []
-parent = 'area'
-print(parent)
-asda = fields[:fields.index(parent)]
+fields = {'country': '<django.forms.models.ModelChoiceField object at 0x0000024B69ADE3C8>', 'region': '<django.forms.models.ModelChoiceField object at 0x0000024B69ADE408>', 'area': '<django.forms.models.ModelChoiceField object at 0x0000024B69ADE4C8>', 'quality_mark':
+    '<django.forms.models.ModelChoiceField object at 0x0000024B69ADDF88>', 'name': '<django.forms.fields.CharField object at 0x0000024B69ADD848>'}
 
-for item in fields:
-    if item != parent:
-        new.append(item)
-    else:
-        break
-print(asda)
-#new2 = list(it.takewhile(lambda x: x != parent, fields))
-#print(new2)
-# new3 = []
-# [new3.append(field) for field in fields if field != parent]
+data = {'csrfmiddlewaretoken': ['DE8KDzurSDT1X9am16vWUL06yOe3hlhLUspIRtakJuXphhfh6WlgJTm1oG30Tz6k'], 'form-TOTAL_FORMS': ['3'], 'form-INITIAL_FORMS': ['0'], 'form-MIN_NUM_FORMS': ['0'], 'form-MAX_NUM_FORMS': ['1000'], 'form-0-country': ['1'], 'form-0-region':
+[''], 'form-0-area': [''], 'form-0-quality_mark': [''], 'form-0-name': [''], 'form-1-country': [''], 'form-1-region': [''], 'form-1-area': [''], 'form-1-quality_mark': [''], 'form-1-name': [''], 'form-2-country': [''], 'form-2-region': [''], 'form-2-area': [''],
+        'form-2-quality_mark': [''], 'form-2-name': ['']}
+
+
+# префикс должен быть верным на момент начала цикла / проверки
+# префикс попробовать взять из данных, а не вычислять из разницы словарей
+# prefix0 = 'form-0-'
+# prefix1 = ''
+# print(data[prefix0+'country'])
+# print(data[prefix1+'country'])
+
+
+# class BaseArticleFormSet(BaseFormSet):
+#     def get_default_prefix(cls):
+#
+#
+# ArticleFormSet = formset_factory(ArticleForm, formset=BaseArticleFormSet)
+
+
+def add_prefix(prefix, index):
+    return '%s-%s' % (prefix, index)
+
+
+print(add_prefix('data', 1))

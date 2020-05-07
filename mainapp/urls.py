@@ -1,10 +1,11 @@
 import os
-from django.urls import path, include
-from mainapp.views import CountryCreateView, ViewJS
+from django.urls import path
+from mainapp.views import SignCreateView, ViewJS, SignFormset
 
 app_name = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
 
 urlpatterns = [
-    path('', CountryCreateView.as_view(), name='Index'),
-    path('country-form-data/', ViewJS.as_view(), name='FormJS')
+    path('', SignCreateView.as_view(), name='Index'),
+    path('formset/<int:pk>/', SignFormset.as_view(), name='Sign Formset'),
+    path('sign-form-data/', ViewJS.as_view(), name='FormJS')
 ]
