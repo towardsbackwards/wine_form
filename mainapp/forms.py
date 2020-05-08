@@ -6,7 +6,6 @@ from mainapp.models import Sign
 
 class SignCreateForm(ModelForm):
     data_url = '/sign-form-data/'
-    prefix = 'form-0-'
 
     class Meta:
         model = Sign
@@ -24,11 +23,12 @@ class SignCreateForm(ModelForm):
         for field_name, field in self.fields.items():
             self.fields[field_name].widget.attrs.update(attrs_dict)
         if self.data:
+            breakpoint()
             for item in child_fields:
-                if self.data[self.prefix+parent]:  # если есть данные в первом поле
+                if self.data[parent]:  # если есть данные в первом поле
                     if 'queryset' in dir(self.fields[item]):
                         for field in self.fields_list[:self.fields_list.index(item)]:
-                            self.fields[item].queryset = self.fields[item].queryset.filter(**{field: self.data[self.prefix+field]})
+                            self.fields[item].queryset = self.fields[item].queryset.filter(**{field: self.data[field]})
                         if len(self.fields[item].queryset) == 0:
                             for child in self.fields_list[self.fields_list.index(item):]:
                                 self.fields[child].widget.attrs['style'] = 'visibility: hidden'
