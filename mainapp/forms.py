@@ -27,6 +27,7 @@ class SignCreateForm(ModelForm):
             print(prefix_fields)
         else:
             parent, child_fields = self.fields_list[0], self.fields_list[1:]
+            print(self.fields_list)
         attrs_dict = {'onchange': 'addForm(this)', 'class': 'form-control', 'data-url': self.data_url}
         for field_name, field in self.fields.items():
             self.fields[field_name].widget.attrs.update(attrs_dict)
@@ -47,6 +48,7 @@ class SignCreateForm(ModelForm):
                 clean_fields = list(map(lambda x: x.replace(f'{self.prefix}-', ''), child_fields))
                 for item in clean_fields:
                     self.fields[item].widget.attrs['style'] = 'visibility: hidden'
+                    self.add_prefix(item)
             else:
                 for item in child_fields:
                     self.fields[item].widget.attrs['style'] = 'visibility: hidden'
