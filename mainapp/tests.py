@@ -25,8 +25,11 @@ data = {'csrfmiddlewaretoken': ['DE8KDzurSDT1X9am16vWUL06yOe3hlhLUspIRtakJuXphhf
 # ArticleFormSet = formset_factory(ArticleForm, formset=BaseArticleFormSet)
 
 
-def add_prefix(prefix, index):
-    return '%s-%s' % (prefix, index)
+# def add_prefix(prefix, index):
+#     return '%s-%s' % (prefix, index)
+#
+#
+# print(add_prefix('data', 1))
 
-
-print(add_prefix('data', 1))
+chilren_fields = ['form-0-country', 'form-0-region', 'form-0-area', 'form-0-quality_mark', 'form-0-name']
+clean_fields = list(map(lambda x: x.replace(self.prefix, ''), chilren_fields))

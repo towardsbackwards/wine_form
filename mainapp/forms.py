@@ -12,18 +12,25 @@ class SignCreateForm(ModelForm):
         fields = ['country', 'region', 'area', 'quality_mark', 'name']
 
     fields_list = ['country', 'region', 'area', 'quality_mark', 'name']
+    # prefix_fields = list(map(lambda x: self.prefix + '-' + x, self.fields_list))
+    # parent, child_fields = prefix_fields[0], prefix_fields[1:]
 
     class Media:
         js = ('js/form.js',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        parent, child_fields = self.fields_list[0], self.fields_list[1:]
+
+        if self.prefix:
+            prefix_fields = list(map(lambda x: self.add_prefix(x), self.fields_list))
+            parent, child_fields = prefix_fields[0], prefix_fields[1:]
+            print(prefix_fields)
+        else:
+            parent, child_fields = self.fields_list[0], self.fields_list[1:]
         attrs_dict = {'onchange': 'addForm(this)', 'class': 'form-control', 'data-url': self.data_url}
         for field_name, field in self.fields.items():
             self.fields[field_name].widget.attrs.update(attrs_dict)
         if self.data:
-            breakpoint()
             for item in child_fields:
                 if self.data[parent]:  # если есть данные в первом поле
                     if 'queryset' in dir(self.fields[item]):
@@ -36,5 +43,10 @@ class SignCreateForm(ModelForm):
                 else:
                     self.fields[item].widget.attrs['style'] = 'visibility: hidden'
         else:
-            for item in child_fields:
-                self.fields[item].widget.attrs['style'] = 'visibility: hidden'
+            if self.prefix:
+                clean_fields = list(map(lambda x: x.replace(f'{self.prefix}-', ''), child_fields))
+                for item in clean_fields:
+                    self.fields[item].widget.attrs['style'] = 'visibility: hidden'
+            else:
+                for item in child_fields:
+                    self.fields[item].widget.attrs['style'] = 'visibility: hidden'
