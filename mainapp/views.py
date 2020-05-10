@@ -34,17 +34,14 @@ class SignCreateView(CreateView):
     success_url = '/'
 
 
-class MyFormSet(BaseFormSet):
+# class MyFormSet(BaseFormSet):
+#
+#     def __init__(self):
+#         super().__init__()
+#         # breakpoint()
+#         for i in range(self.total_form_count()):
+#             print(self.add_prefix(i))
 
-    def __init__(self):
-        super().__init__()
-        # breakpoint()
-        for i in range(self.total_form_count()):
-            print(self.add_prefix(i))
-
-    def ordered_forms(self):
-        super().ordered_forms()
-        print('aaaaaaaaa', self.ordered_forms())
 
 
 class SignFormset(UpdateView):
@@ -57,6 +54,6 @@ class SignFormset(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        formset = formset_factory(form=SignCreateForm, formset=MyFormSet, extra=3, can_delete=False, can_order=False)
+        formset = formset_factory(form=SignCreateForm, formset=BaseFormSet, extra=3, can_delete=False, can_order=False)
         context['formset'] = formset
         return context
