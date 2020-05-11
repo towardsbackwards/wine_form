@@ -4,18 +4,13 @@
 <script src="{% static 'js/formset.js' %}"></script>
 <form action="" style="width: 50em; margin: auto" method="POST" id="city_form">
 
-
-    <fieldset name="fieldset">
         {% csrf_token %}
-        {{ formset.media }}
         {% for form in formset %}
             <div id="formset_form_{{ forloop.counter }}">
         {{ form }}
             </div>
 
         {% endfor %}
-    </fieldset>
-    <input type="submit" value='Save'>
-
+                <input type="submit" value='Save'>
 </form>
 {% endblock %}

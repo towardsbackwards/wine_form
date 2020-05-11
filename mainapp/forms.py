@@ -1,5 +1,4 @@
 from django.forms import ModelForm
-from django.utils.datastructures import MultiValueDictKeyError
 
 from mainapp.models import Sign
 
@@ -30,8 +29,19 @@ class SignCreateForm(ModelForm):
 
         parent, child_fields = self.fields_list[0], self.fields_list[1:]
         if self.data:
-            print(self.data)
-            self.prefix = self.data['field_name'][:len(self.data['field_name']) - len(self.Meta.fields[int(self.data['num']) - 1])]
+            if 'field_name' in self.data and 'num' in self.data:
+                #  для избежания ошибки MultiValueDictKeyError (из-за переменных 'num' и 'active_field')
+                active_field = self.data['field_name']
+                num = self.data['num']
+                self.data._mutable = True
+                self.data.pop('field_name')
+                self.data.pop('num')
+            else:
+                active_field = self.fields_list[-1]
+                num = len(self.fields)
+
+            self.prefix = active_field[:len(active_field) - len(self.Meta.fields[int(num) - 1])]
+
             for item in child_fields:
                 if self.data[self.prefix+parent]:
                     if 'queryset' in dir(self.fields[item]):
