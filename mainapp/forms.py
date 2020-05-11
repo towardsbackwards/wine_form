@@ -33,15 +33,21 @@ class SignCreateForm(ModelForm):
             self.prefix = self.data['field_name'][:len(self.data['field_name']) - len(self.Meta.fields[int(self.data['num']) - 1])]
             print(self.data)
             print(self.prefix)
-            try:
-                for item in child_fields:
-                    if self.data[self.prefix+parent]:
-                        if 'queryset' in dir(self.fields[item]):
-                            for field in self.fields_list[:self.fields_list.index(item)]:
-                                self.fields[item].queryset = self.fields[item].queryset.filter(**{field: self.data[self.prefix+field]})
-                        parent = item
-            except ValueError:
-                breakpoint()
+            for item in child_fields:
+                if self.data[self.prefix+parent]:
+                    if 'queryset' in dir(self.fields[item]):
+                        for field in self.fields_list[:self.fields_list.index(item)]:
+                            self.fields[item].queryset = self.fields[item].queryset.filter(**{field: self.data[self.prefix+field]})
+                        if len(self.fields[item].queryset) == 0:  # len, а не count() чтобы не обращаться к БД каждый раз
+                            for child in self.fields_list[self.fields_list.index(item):]:
+                                self.fields[child].widget.attrs['style'] = 'visibility: hidden'  # скрывает все поля ниже item
+                    parent = item
+                else:
+                    self.fields[item].widget.attrs['style'] = 'visibility: hidden'
+        else:
+            for item in child_fields:
+                self.fields[item].widget.attrs['style'] = 'visibility: hidden'
+
 
 
     #  ФОРМА СТАЛА СОХРАНЯТЬСЯ ВМЕСТЕ В ДОПОЛНИТЕЛЬНЫМИ ПЕРЕМЕННЫМИ JS
