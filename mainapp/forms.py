@@ -30,9 +30,8 @@ class SignCreateForm(ModelForm):
 
         parent, child_fields = self.fields_list[0], self.fields_list[1:]
         if self.data:
-            self.prefix = self.data['field_name'][:len(self.data['field_name']) - len(self.Meta.fields[int(self.data['num']) - 1])]
             print(self.data)
-            print(self.prefix)
+            self.prefix = self.data['field_name'][:len(self.data['field_name']) - len(self.Meta.fields[int(self.data['num']) - 1])]
             for item in child_fields:
                 if self.data[self.prefix+parent]:
                     if 'queryset' in dir(self.fields[item]):
@@ -47,7 +46,3 @@ class SignCreateForm(ModelForm):
         else:
             for item in child_fields:
                 self.fields[item].widget.attrs['style'] = 'visibility: hidden'
-
-
-
-    #  ФОРМА СТАЛА СОХРАНЯТЬСЯ ВМЕСТЕ В ДОПОЛНИТЕЛЬНЫМИ ПЕРЕМЕННЫМИ JS

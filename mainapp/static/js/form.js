@@ -5,7 +5,7 @@
 //     xhttp.ontimeout = function (e) {
 //             console.log('bad timeout');
 //         };
-//     xhttp.onreadystatechange = function() {
+//     xhttp.onreadystatechange = function() { // это событие которое случится когда нам придет ответ от сервера
 //         if (this.readyState === 4){
 //             if (this.status && this.status === 200) {
 //                 console.log('good');
