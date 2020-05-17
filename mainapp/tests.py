@@ -33,8 +33,3 @@ data = {'csrfmiddlewaretoken': ['DE8KDzurSDT1X9am16vWUL06yOe3hlhLUspIRtakJuXphhf
 
 # chilren_fields = ['form-0-country', 'form-0-region', 'form-0-area', 'form-0-quality_mark', 'form-0-name']
 # clean_fields = list(map(lambda x: x.replace(self.prefix, ''), chilren_fields))
-
-a = 'form-0-my-beautiful-form-country'
-b = 'my-beautiful-form-country'
-d = a[:len(a) - len(b)]
-print(type(d), d)

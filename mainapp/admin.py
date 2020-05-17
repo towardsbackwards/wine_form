@@ -1,8 +1,8 @@
 from django.contrib import admin
-from mainapp.models import Country, Region, Area, QualityMark, Sign
+from mainapp.models import CountryModel, RegionModel, AreaModel, MarkModel, SignModel
 
-admin.site.register(Country)
-admin.site.register(Region)
-admin.site.register(Area)
-admin.site.register(QualityMark)
-admin.site.register(Sign)
+admin.site.register(CountryModel)
+admin.site.register(RegionModel)
+admin.site.register(AreaModel)
+admin.site.register(MarkModel)
+admin.site.register(SignModel)
