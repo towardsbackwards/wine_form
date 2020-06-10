@@ -9,19 +9,23 @@ from wine_form_new.settings import STATIC_URL
 
 
 class ViewJS(FormView):
+    """Class for AJAX form transmitting.
+    form.errors.clear() is needed because form sends to server every time the user changes any field
+    and empty fields may not be allowed by form model. So form.errors.clear() helps JS to avoid empty field errors."""
     form_class = SignCreateForm
+    success_url = '/'
 
     def form_valid(self, form):
-        super().form_valid(form)
-        return JsonResponse({'form': str(form)})
+        form.save()
+        return super(ViewJS, self).form_valid(form)
 
     def form_invalid(self, form):
-        super().form_invalid(form)
+        [print(item) for item in form.errors.items()]
         form.errors.clear()
         return JsonResponse({'form': str(form)})
 
 
-class SignCreateView(CreateView):
+class SignCreateView(FormView):
     # success_url = reverse_lazy('main:Index')
     """Generic class for Country creation form rendering"""
     template_name = "index.html"
@@ -33,13 +37,13 @@ class SignFormset(CreateView):
     model = SignModel
     template_name = "formset.html"
     fields = '__all__'
-#
-#     def __init__(self, *args, **kwargs):
-#         super(SignFormset, self).__init__(*args, **kwargs)
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data()
-#         formset = formset_factory(form=SignCreateForm, formset=BaseFormSet, extra=3, can_delete=False, can_order=False)
-#         context['formset'] = formset
-#         context['form.media'] = os.path.join(STATIC_URL, 'js/formset.js')
-#         return context
+    success_url = '/'
+
+    def __init__(self, *args, **kwargs):
+        super(SignFormset, self).__init__(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        formset = formset_factory(form=SignCreateForm, formset=BaseFormSet, extra=3, can_delete=False, can_order=False)
+        context['formset'] = formset
+        return context
