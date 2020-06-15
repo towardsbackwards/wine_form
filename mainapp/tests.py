@@ -74,15 +74,15 @@ def data_field_match(form_data, field_key):
                 match_item = item
     return {'match_item': match_item, 'prefix': prefix}
 
-
-print(data_field_match(data, key)['match_item'])
-
-# def data_match(key, data):
-#     for item in data:
-#         if key in item:
-#             return item
-#         else:
-#             return None
 #
-#
-# print(data_match(key, data))
+# print(data_field_match(data, key)['match_item'])
+
+
+dependencies = {'sign': ('country', 'region', 'area'), 'area': ('region',), 'region': ('country',)}
+
+for key, value in dependencies.items():
+    if len(value) == 1:
+        print(f'{key}, {value}')
+    else:
+        for i in range(len(value)):
+            print(f'key = {key}, value(s) = {value[i-1]}, values length = {len(value)}')

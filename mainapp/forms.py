@@ -17,8 +17,8 @@ def data_field_match(field_key, form_data):
         elif field_key in item[-len(field_key):]:
             prefix = item[:-len(field_key)]
             return {'match_item': match_item, 'prefix': prefix}
-        else:
-            return None
+    else:
+        return None
 
 
 class SignCreateForm(ModelForm):
@@ -30,10 +30,11 @@ class SignCreateForm(ModelForm):
         fields = ['country', 'region', 'area', 'quality_mark', 'sign']
 
     fields_list = ['country', 'region', 'area', 'quality_mark', 'sign']
-    dependencies = {'sign': ('country', 'region', 'area'), 'area': 'region', 'region': 'country'}
-
+    dependencies = {'quality_mark': ('country', 'region', 'area'), 'area': ('region',), 'region': ('country',)}
+    # если меняется значения в select полей country, region или area - должен поменяться список options в select для
+    # поля sign. Возможно, что поменяется и значение
     class Media:
-        js = ('js/form.js',)
+        js = ('js/formset.js',)
 
     def __init__(self, *args, **kwargs):
         parent, child_fields = self.fields_list[0], self.fields_list[1:]
@@ -42,17 +43,31 @@ class SignCreateForm(ModelForm):
         for field_name, field in self.fields.items():
             self.fields[field_name].widget.attrs.update(attrs_dict)
         if self.is_bound:
-            for item in child_fields:
-                    if data_field_match(parent, self.data):  # если есть данные в первом поле
-                        prefix = data_field_match(parent, self.data)['prefix']
-                        upper_field = self.fields_list[self.fields_list.index(item) - 1]
-                        self.fields[item].limit_choices_to = {upper_field: self.data[prefix+upper_field]}
-                        apply_limit_choices_to_to_formfield(self.fields[item])
-                        parent = item
-                        #  надо ли отделять префикс. для одного парента логика сработает, но как это будет работать для 2 и более парентов?
-                        #  подумать тут о переделке на полностью по полям, хз как но над
-                    else:
-                        self.fields[item].widget.attrs['style'] = 'visibility: hidden'
+            #  заменить на цикл по ключ зависимости - зависимые поля
+            #  типа ограничиваем выборку в соответствии с зависимостями
+
+            for key, value in self.dependencies.items():
+                prefix = data_field_match(key, self.data)['prefix']
+                if len(value) == 1:
+                    print(f'{key}, {value}')
+                    self.fields[key].limit_choices_to = {value: self.data[prefix+value[0]]}
+                else:
+                    for i in range(len(value)):
+                        print(f'key = {key}, value(s) = {value[i - 1]}, values length = {len(value)}')
+                        self.fields[key].limit_choices_to = {value: self.data[prefix + value[i-1]]}
+
+
+            # for item in child_fields:
+            #         if data_field_match(parent, self.data):  # если есть данные в первом поле
+            #             prefix = data_field_match(parent, self.data)['prefix']
+            #             if self.data[prefix+item]:
+            #                 upper_field = self.fields_list[self.fields_list.index(item) - 1]
+            #                 self.fields[item].limit_choices_to = {upper_field: self.data[prefix+upper_field]}
+            #                 apply_limit_choices_to_to_formfield(self.fields[item])
+            #                 parent = item
+            #         else:
+            #             self.fields[item].widget.attrs['style'] = 'visibility: hidden'
         else:
             for item in child_fields:
+                pass
                 self.fields[item].widget.attrs['style'] = 'visibility: hidden'

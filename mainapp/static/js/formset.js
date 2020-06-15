@@ -9,13 +9,13 @@ function addForm(obj){
         if (this.readyState === 4){
             if (this.status && this.status === 200) {
                 console.log('good');
-                //document.getElementById(obj.parentNode.id).innerHTML = this.response.form;
-                // alert(obj);
+                document.getElementById(obj.parentNode.id).innerHTML = this.response.form;
+                // console.log(obj.getElementsByTagName('option')[obj.id-1].text);
                 // alert(obj.value);
                 // alert(JSON.stringify(this.response));
                 // var jsonResult = JSON.stringify(this.response);
                 // var tableResult = jsonResult[0];
-                document.getElementById('result').innerHTML = this.response.form;
+                // document.getElementById(obj.id).innerHTML = this.response.region;
             } else {
                 console.log('bad');
             }
