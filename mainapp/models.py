@@ -34,6 +34,7 @@ class AreaModel(MetaModel):
         verbose_name_plural = _("Areas")
 
     region = models.ForeignKey(RegionModel, on_delete=models.CASCADE, blank=True, null=True)
+    country = models.ForeignKey(CountryModel, on_delete=models.CASCADE, blank=True, null=True)
 
 
 class MarkModel(MetaModel):
@@ -42,6 +43,8 @@ class MarkModel(MetaModel):
         verbose_name_plural = _("Quality marks")
 
     area = models.ForeignKey(AreaModel, on_delete=models.CASCADE)
+    region = models.ForeignKey(RegionModel, on_delete=models.CASCADE, blank=True, null=True)
+    country = models.ForeignKey(CountryModel, on_delete=models.CASCADE, blank=True, null=True)
 
 
 class SignModel(MetaModel):
