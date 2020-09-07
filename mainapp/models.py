@@ -1,67 +1,64 @@
+from random import randint
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-class Country(models.Model):
+
+class MetaModel(models.Model):
+    """Core model"""
+
+    name = models.CharField(_('Item name'), unique=False, max_length=128, blank=False, null=False)
+
+    def __str__(self):
+        super().__str__()
+        return self.name
+
+
+class CountryModel(MetaModel):
     """Common Country model"""
     class Meta:
         verbose_name_plural = _("Countries")
 
-    name = models.CharField(_('Country name'), unique=True,  max_length=128, blank=False, null=False)
 
-    def __str__(self):
-        return self.name
-
-
-class Region(models.Model):
+class RegionModel(MetaModel):
     """Common region model (depends on Country)"""
     class Meta:
         verbose_name_plural = _("Regions")
 
-    country = models.ForeignKey(Country, on_delete=models.CASCADE, blank=True, null=True)
-    name = models.CharField(_('Region name'), max_length=128)
-
-    def __str__(self):
-        return self.name
+    country = models.ForeignKey(CountryModel, on_delete=models.CASCADE, blank=True, null=True)
 
 
-class Area(models.Model):
+class AreaModel(MetaModel):
     """Common area model (depends on region)"""
     class Meta:
         verbose_name_plural = _("Areas")
 
-    country = models.ForeignKey(Country, on_delete=models.CASCADE, blank=True, null=True)
-    region = models.ForeignKey(Region, on_delete=models.CASCADE)
-    name = models.CharField(_('Area name'), max_length=128)
-
-    def __str__(self):
-        return self.name
+    region = models.ForeignKey(RegionModel, on_delete=models.CASCADE, blank=True, null=True)
+    country = models.ForeignKey(CountryModel, on_delete=models.CASCADE, blank=True, null=True)
 
 
-class QualityMark(models.Model):
+class MarkModel(MetaModel):
     """Common quality mark model (depends on Country, region and area)"""
     class Meta:
         verbose_name_plural = _("Quality marks")
 
-    country = models.ForeignKey(Country, on_delete=models.CASCADE)
-    region = models.ForeignKey(Region, on_delete=models.CASCADE)
-    area = models.ForeignKey(Area, on_delete=models.CASCADE)
-    name = models.CharField(_('Quality mark'), max_length=64)
+    area = models.ForeignKey(AreaModel, on_delete=models.CASCADE)
+    region = models.ForeignKey(RegionModel, on_delete=models.CASCADE, blank=True, null=True)
+    country = models.ForeignKey(CountryModel, on_delete=models.CASCADE, blank=True, null=True)
+
+
+class SignModel(MetaModel):
+    """Common "wine sign" model (depends on Country, region. area and quality mark)"""
 
     def __str__(self):
-        return self.name
+        super().__str__()
+        return f'Sign {self.id} ({self.name})'
 
-
-class Sign(models.Model):
-    """Common "wine sign" model (depends on Country, region. area and quality mark)"""
     class Meta:
         verbose_name_plural = _("Signs")
-
-    country = models.ForeignKey(Country, on_delete=models.CASCADE, blank=True, null=True)
-    region = models.ForeignKey(Region, on_delete=models.CASCADE, blank=True, null=True)
-    area = models.ForeignKey(Area, on_delete=models.CASCADE, blank=True, null=True)
-    quality_mark = models.ForeignKey(QualityMark, on_delete=models.CASCADE, blank=True, null=True)
+    country = models.ForeignKey(CountryModel, on_delete=models.CASCADE, blank=True, null=True)
+    region = models.ForeignKey(RegionModel, on_delete=models.CASCADE, blank=True, null=True)
+    area = models.ForeignKey(AreaModel, on_delete=models.CASCADE, blank=True, null=True)
     sign = models.CharField(_('Wine sign'), max_length=1, null=True)
-    name = models.CharField(_('Sign'), max_length=64, null=True)
+    quality_mark = models.ForeignKey(MarkModel, on_delete=models.CASCADE, blank=True, null=True)
 
-    def __str__(self):
-        return f'Sign {self.id} ({self.country}, {self.region})'

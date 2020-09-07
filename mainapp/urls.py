@@ -6,6 +6,6 @@ app_name = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
 
 urlpatterns = [
     path('', SignCreateView.as_view(), name='Index'),
-    path('formset/<int:pk>/', SignFormset.as_view(), name='Sign Formset'),
+    path('formset/', SignFormset.as_view(), name='Sign Formset'),
     path('sign-form-data/', ViewJS.as_view(), name='FormJS')
 ]

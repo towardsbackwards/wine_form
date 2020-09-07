@@ -10,15 +10,27 @@ function addForm(obj){
             if (this.status && this.status === 200) {
                 console.log('good');
                 document.getElementById(obj.parentNode.id).innerHTML = this.response.form;
+                // уточнить блок, который рефрешится, возможно не тот
+                // сюда можно вернуть код для элемента select по имени select name= , но нужно правильно сформировать html рендер
+
+
+                // alert(document.getElementsByName('form-0country')[0].getElementsByTagName('option'));
+                // mb self.fields['country'].widget......
+                // console.log(obj.getElementsByTagName('option')[obj.id-1].text);
+                // alert(obj.value);
+                // alert(JSON.stringify(this.response));
+                // var jsonResult = JSON.stringify(this.response);
+                // var tableResult = jsonResult[0];
+                // document.getElementById(obj.id).innerHTML = this.response.region;
             } else {
                 console.log('bad');
             }
         }
     };
+
     var data = new FormData(obj.form);
-    data.append('field_name', obj.name);
-    data.append('num', obj.getAttribute('num'));
     xhttp.open(obj.form.method, obj.getAttribute('data-url'), true);
     xhttp.setRequestHeader('X-Requested-With','XMLHttpRequest');
     xhttp.send(data);
 }
+
