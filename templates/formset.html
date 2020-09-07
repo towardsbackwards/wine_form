@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% load i18n %}
+{% load static %}
+{% block body %}
+<script src="{% static 'js/formset.js' %}"></script>
+<form action="" style="width: 50em; margin: auto" method="POST" id="city_form">
+
+        {% csrf_token %}
+        {% for form in formset %}
+            <div id="formset_form_{{ forloop.counter }}">
+        {{ form }}
+            </div>
+
+        {% endfor %}
+                <input type="submit" value='Save'>
+</form>
+{% endblock %}
